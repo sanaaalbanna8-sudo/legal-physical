@@ -555,6 +555,38 @@ a.card:hover {
   border-inline-start: 5px solid var(--bad);
 }
 
+.cmp-wrap {
+  overflow-x: auto;
+  margin: 12px 0 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+.cmp {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+.cmp th, .cmp td {
+  padding: 12px 14px;
+  text-align: right;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+.cmp th {
+  background: #1c2a44;
+  color: #fff;
+  font-weight: 800;
+}
+[data-theme="dark"] .cmp th { background: #243044; }
+.cmp tr:last-child td { border-bottom: 0; }
+.cmp td:first-child { font-weight: 800; color: var(--navy); white-space: nowrap; }
+.cmp .tag-ok { color: var(--good); font-weight: 800; }
+.cmp .tag-bad { color: var(--bad); font-weight: 800; }
+
 .measure {
   display: grid;
   grid-template-columns: 52px 1fr;
