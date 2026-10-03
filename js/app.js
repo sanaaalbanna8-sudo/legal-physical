@@ -102,17 +102,6 @@ function en(key) {
   return `<span class="tw-en ltr">${speakBtn(g.say || label)}<b>${esc(label)}</b></span>`;
 }
 
-function specTerms(keys) {
-  const chips = keys.map((key) => {
-    const g = findTerm(key);
-    const label = g ? (g.exam || g.en) : key;
-    const ar = g ? g.ar : "";
-    const say = g ? (g.say || label) : key;
-    return `<span class="vocab-chip"><span class="ltr">${speakBtn(say)}<b class="vocab-en">${esc(label)}</b></span>${ar ? `<span class="vocab-ar">${esc(ar)}</span>` : ""}</span>`;
-  }).join("");
-  return `<aside class="vocab-strip"><h3>مصطلحات الامتحان — احفظيها بالإنجليزي</h3><div class="vocab-chips">${chips}</div></aside>`;
-}
-
 function speakEnglish(text) {
   if (!window.speechSynthesis || !text) return;
   window.speechSynthesis.cancel();
@@ -674,7 +663,6 @@ function renderAntivirus() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>برامج مكافحة الفيروسات ${en("antivirus software")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>مثل حارس يفحص كل ملف يدخل الجهاز: هل هذا الملف سليم أم فيروس؟ إذا شكّ فيه، يعزله أو يحذفه قبل أن يؤذي النظام.</p></aside>
-    ${specTerms(["antivirus software", "virus signatures", "heuristics", "identified threats", "quarantine"])}
     ${watchBlock("antivirus")}
     <p class="lead">لماذا نحتاجه؟ لأن الفيروسات والبرامج الضارة تصل عبر الإيميل، التحميل، أو ${en("USB")} — وبدون فحص قد تسرق بيانات أو تعطّل الجهاز.</p>
     <h2>كيف يكتشف التهديد؟ (ثلاث طرق)</h2>
@@ -699,7 +687,6 @@ function renderFirewall() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>جدار الحماية ${en("firewall")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>بوابة أمن بين شبكة المؤسسة والإنترنت. تفحص كل بيانات داخلة أو خارجة: المسموح يمر، والمشبوه يُحظر.</p></aside>
-    ${specTerms(["firewall", "software firewall", "hardware firewall", "packet filtering", "application layer awareness", "inbound rules", "outbound rules", "network address"])}
     ${watchBlock("firewall")}
     ${graphic(SVG.firewall, "الإنترنت ← جدار الحماية ← شبكة المؤسسة")}
     <p class="lead">نوعان: ${en("software firewall")} يعمل برنامجًا على جهاز واحد، و${en("hardware firewall")} جهاز واحد يفحص بيانات كل الحواسيب على الشبكة المحلية ${en("LAN")}.</p>
@@ -726,7 +713,6 @@ function renderAuth() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>مصادقة المستخدم ${en("user authentication")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>قبل أن تدخل النظام: أثبت أنك أنتِ. الهدف دخول الشرعيين بسهولة نسبيًا، ومنع غير المصرح ${en("unauthorised access")}.</p></aside>
-    ${specTerms(["user authentication", "login", "strong password", "graphical password", "biometric authentication", "two-step verification", "security tokens", "knowledge-based authentication", "Kerberos", "certificate-based authentication"])}
     ${watchBlock("auth")}
     <h2>الطرق من الأبسط إلى الأقوى</h2>
     <div class="grid grid-2">
@@ -756,7 +742,6 @@ function renderAccess() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>التحكم في الوصول ${en("access controls")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>حتى بعد تسجيل الدخول: ليس كل شخص يرى كل شيء. نحدد من يصل إلى أي مورد، وهل يقرأ فقط أم يعدّل.</p></aside>
-    ${specTerms(["access controls", "applications", "folders", "files", "physical resources", "trusted computing", "TPM"])}
     ${watchBlock("access")}
     <p class="lead">التحكم في الوصول يقيّد المستخدم عن: ${en("applications")} و${en("folders")} و${en("files")} و${en("physical resources")} مثل غرفة الخادم أو الخزنة.</p>
     <ul class="ticks">
@@ -783,7 +768,6 @@ function renderEncrypt() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>التشفير ${en("encryption")}</h1>
     <aside class="def"><strong>الغرض</strong><p>إخفاء البيانات حتى لا يقرأها إلا الشخص المقصود. معظم الطرق تعتمد على مفتاح، والمفتاح رقم ثنائي: يُستخدم للتشفير ولإعادة البيانات إلى شكلها المقروء.</p></aside>
-    ${specTerms(["encryption", "safe password storage", "DRM", "disc encryption", "communications encryption", "built-in encryption", "Tor", "VPN", "digital certificate", "certificate authority", "HTTPS", "public key", "private key"])}
     ${watchBlock("encrypt")}
 
     <h2>الفرق الأساسي: مفتاح واحد أم مفتاحان؟</h2>
@@ -926,7 +910,6 @@ function renderWlan() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>حماية الشبكة اللاسلكية ${en("WLAN")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>الـ ${en("Wi‑Fi")} يبث بالراديو — أي شخص قريب قد يحاول التنصت. لذلك نغلق الشبكة بكلمة مرور قوية ومعايير حديثة، ونفصل شبكة الزوار عن الموظفين.</p></aside>
-    ${specTerms(["WLAN", "SSID", "MAC address filtering", "WEP", "WPA2", "WPS", "wireless vulnerabilities", "security by design"])}
     ${watchBlock("wlan")}
     <h2>احتياطات مهمة</h2>
     <div class="grid grid-2">
