@@ -193,7 +193,8 @@ a.card:hover {
   gap: 4px;
   margin-inline: 4px;
   vertical-align: middle;
-  white-space: nowrap;
+  flex-wrap: wrap;
+  white-space: normal;
 }
 .tw-en b {
   font-weight: 800;
@@ -206,7 +207,7 @@ a.card:hover {
   font-size: 0.8rem;
 }
 .measure .tw-en, .panel .tw-en, h1 .tw-en, h2 .tw-en, h3 .tw-en {
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .vocab-strip {
@@ -583,7 +584,7 @@ a.card:hover {
 }
 [data-theme="dark"] .cmp th { background: #243044; }
 .cmp tr:last-child td { border-bottom: 0; }
-.cmp td:first-child { font-weight: 800; color: var(--navy); white-space: nowrap; }
+.cmp td:first-child { font-weight: 800; color: var(--navy); }
 .cmp .tag-ok { color: var(--good); font-weight: 800; }
 .cmp .tag-bad { color: var(--bad); font-weight: 800; }
 
