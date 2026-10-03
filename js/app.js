@@ -14,6 +14,78 @@ function video(id, title, cap) {
   return `<figure class="vid"><iframe src="https://www.youtube.com/embed/${id}" title="${esc(title)}" allowfullscreen loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe><figcaption>${esc(cap)}</figcaption></figure>`;
 }
 
+/** فيديوهات توضيحية لقسم البرمجيات فقط (أ5) */
+const A5_VIDEOS = {
+  antivirus: {
+    id: "7TgRETma4fU",
+    title: "What Is Antivirus Software?",
+    channel: "Keeper Security",
+    time: "دقيقتان",
+    why: "يوضّح كيف يفحص البرنامج الملفات، يقارنها بقاعدة التهديدات، ثم يعزلها أو يحذفها — ولماذا التحديث المستمر ضروري.",
+    focus: ["توقيعات الفيروسات", "العزل أو الحذف", "حدود الحماية أمام فيروس جديد"],
+  },
+  firewall: {
+    id: "kDEX1HXybrU",
+    title: "What is a Firewall?",
+    channel: "PowerCert Animated Videos",
+    time: "6 دقائق",
+    why: "رسم متحرك يبيّن جدار الحماية كحاجز بين الشبكة الخاصة والإنترنت، والفرق بين جدار على جهاز واحد وجدار يحمي الشبكة كلها.",
+    focus: ["قواعد السماح والمنع", "حزم البيانات", "جدار برمجي وجدار شبكي"],
+  },
+  auth: {
+    id: "mMKo-fG89jQ",
+    title: "What is Two-Factor Authentication (2FA)?",
+    channel: "Eye on Tech",
+    time: "دقيقتان",
+    why: "يفصل عوامل إثبات الهوية: شيء تعرفه، شيء تملكه، وشيء أنت عليه — وهذا أساس كلمة المرور والرمز والبصمة.",
+    focus: ["عامل المعرفة", "عامل الحيازة", "العامل البيومتري"],
+  },
+  access: {
+    id: "HDNKuQ0ji94",
+    title: "Authentication, Authorization, and Accounting",
+    channel: "CertBros",
+    time: "شرح AAA",
+    why: "يفرّق بين إثبات الهوية (من أنت؟) والصلاحيات (ماذا يُسمح لك أن تفعل؟) بعد الدخول.",
+    focus: ["Authentication", "Authorization", "قراءة مقابل تعديل"],
+  },
+  encrypt: {
+    id: "ZghMPWGXexs",
+    title: "The Internet: Encryption & Public Keys",
+    channel: "Code.org",
+    time: "6 دقائق",
+    why: "يشرح التشفير من مثال بسيط حتى المفتاح العام والخاص، ولماذا يظهر القفل في المتصفح.",
+    focus: ["تشفير وفك تشفير", "مفتاح عام وخاص", "قفل HTTPS"],
+  },
+  wlan: {
+    id: "bMQ3W0Vxy3o",
+    title: "WiFi Security: WEP, WPA, WPA2, WPA3 and WPS",
+    channel: "Florian Dalwigk",
+    time: "مقارنة المعايير",
+    why: "يقارن معايير تشفير الواي فاي، ويوضّح لماذا WEP ضعيف ولماذا WPS ثغرة يجب إغلاقها.",
+    focus: ["WEP ضعيف", "WPA2 هو الأنسب", "عطّل WPS"],
+  },
+};
+
+function watchBlock(topicId) {
+  const v = A5_VIDEOS[topicId];
+  if (!v) return "";
+  return `
+    <section class="watch" aria-label="فيديو توضيحي">
+      <div class="watch-body">
+        <div class="watch-top">
+          <span class="watch-badge">شاهد لنفهم</span>
+          <span class="watch-meta">${esc(v.time)} · <span class="ltr">${esc(v.channel)}</span></span>
+        </div>
+        <h2 class="watch-title ltr">${esc(v.title)}</h2>
+        <p class="watch-why">${esc(v.why)}</p>
+      </div>
+      ${video(v.id, v.title, "الفيديو بالإنجليزية. المصطلحات نفسها الموجودة في الدرس.")}
+      <ul class="watch-focus">
+        ${v.focus.map((item) => `<li>${esc(item)}</li>`).join("")}
+      </ul>
+    </section>`;
+}
+
 function findTerm(key) {
   return GLOSSARY.find((x) => x.en === key) || GLOSSARY.find((x) => x.en.startsWith(key + " "));
 }
@@ -259,11 +331,46 @@ function renderHome() {
   `;
 }
 
+function renderA5() {
+  $app.innerHTML = `
+    <p class="kicker">نتاج التعلم A5 · Software and hardware security</p>
+    <h1>تدابير أمان البرامج والأجهزة</h1>
+    <p class="lead">ست طبقات تحمي النظام من الداخل: فحص الملفات، حراسة حدود الشبكة، إثبات الهوية، تحديد الصلاحيات، تشفير البيانات، وتأمين شبكة Wi‑Fi. كل درس يبدأ بفيديو قصير ثم الشرح.</p>
+    ${groupNav("a5", "")}
+    <div class="grid grid-2">
+      ${A5.map((t, i) => `
+        <a class="card" href="#/${t.id}"><b>${String(i + 1).padStart(2, "0")}</b><strong>${esc(t.label)}</strong><small>${esc(t.short)} · فيديو توضيحي</small></a>
+      `).join("")}
+    </div>
+    <h2>مكتبة الفيديو</h2>
+    <p class="lead">شاهدي المقطع أولًا، ثم ارجعي للنص لتربطي الصورة بالمصطلح الإنجليزي.</p>
+    <div class="video-lib">
+      ${A5.map((t) => {
+        const v = A5_VIDEOS[t.id];
+        return `
+          <a class="video-card" href="#/${t.id}">
+            <span class="video-thumb">
+              <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" />
+              <span class="play" aria-hidden="true"></span>
+            </span>
+            <span class="video-copy">
+              <span class="watch-badge">شاهد لنفهم</span>
+              <strong>${esc(t.label)}</strong>
+              <small class="ltr">${esc(v.title)}</small>
+              <small>${esc(v.why)}</small>
+            </span>
+          </a>`;
+      }).join("")}
+    </div>
+    <p style="margin-top:16px"><a class="card" href="#/antivirus"><b>→</b><strong>ابدئي من هنا</strong><small>مكافحة الفيروسات</small></a></p>
+  `;
+}
+
 function renderHub(group) {
   if (group === "a4") return renderA4();
+  if (group === "a5") return renderA5();
   const meta = {
     a3: { title: "أ3 · المسؤوليات القانونية", lead: "طبّقي فهم المسؤوليات القانونية للمؤسسات على سيناريوهات قطاعية ومهنية تتعلق بالأمن السيبراني.", list: A3, start: "vectors" },
-    a5: { title: "أ5 · تدابير أمان البرامج والأجهزة", lead: "أدوات تقنية تحمي النظام من الداخل: تفحص الملفات (مكافحة فيروسات)، تحرس حدود الشبكة (جدار حماية)، تتأكد من هوية المستخدم (مصادقة)، تحدد صلاحياته، تشفّر البيانات، وتحمي الـ Wi‑Fi.", list: A5, start: "antivirus" },
   }[group];
   $app.innerHTML = `
     <p class="kicker">نتاج التعلم ${group.toUpperCase()}</p>
@@ -555,6 +662,7 @@ function renderAntivirus() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>برامج مكافحة الفيروسات ${en("antivirus software")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>مثل حارس يفحص كل ملف يدخل الجهاز: هل هذا الملف سليم أم فيروس؟ إذا شكّ فيه، يعزله أو يحذفه قبل أن يؤذي النظام.</p></aside>
+    ${watchBlock("antivirus")}
     <p class="lead">لماذا نحتاجه؟ لأن الفيروسات والبرامج الضارة تصل عبر الإيميل، التحميل، أو ${en("USB")} — وبدون فحص قد تسرق بيانات أو تعطّل الجهاز.</p>
     <h2>كيف يكتشف التهديد؟ (ثلاث طرق)</h2>
     <ol class="flow-list">
@@ -578,6 +686,7 @@ function renderFirewall() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>جدار الحماية ${en("firewall")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>بوابة أمن بين شبكة المؤسسة والإنترنت. تفحص كل بيانات داخلة أو خارجة: المسموح يمر، والمشبوه يُحظر.</p></aside>
+    ${watchBlock("firewall")}
     ${graphic(SVG.firewall, "الإنترنت ← جدار الحماية ← شبكة المؤسسة")}
     <p class="lead">يوجد كـ <b>برنامج</b> على جهازك، أو كـ <b>جهاز عتاد</b> واحد يحمي كل الحواسيب على الشبكة المحلية ${en("LAN")}.</p>
     <h2>تقنيات التصفية (كيف يقرر؟)</h2>
@@ -603,6 +712,7 @@ function renderAuth() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>مصادقة المستخدم ${en("user authentication")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>قبل أن تدخل النظام: أثبت أنك أنتِ. الهدف دخول الشرعيين بسهولة نسبيًا، ومنع غير المصرح ${en("unauthorised access")}.</p></aside>
+    ${watchBlock("auth")}
     <h2>الطرق من الأبسط إلى الأقوى</h2>
     <div class="grid grid-2">
       <article class="panel"><strong>تسجيل الدخول</strong> ${en("login")}<p>اسم مستخدم + كلمة مرور (طبقة واحدة). مناسبة للبداية، وغالبًا غير كافية وحدها لأنظمة حساسة.</p></article>
@@ -631,6 +741,7 @@ function renderAccess() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>التحكم في الوصول ${en("access controls")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>حتى بعد تسجيل الدخول: ليس كل شخص يرى كل شيء. نحدد من يفتح أي ملف/مجلد، وهل يقرأ فقط أم يعدّل.</p></aside>
+    ${watchBlock("access")}
     <ul class="ticks">
       <li><b>قراءة فقط:</b> يشاهد الملف ولا يغيّره.</li>
       <li><b>كتابة:</b> يستطيع التعديل.</li>
@@ -655,6 +766,7 @@ function renderEncrypt() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>التشفير ${en("encryption")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>تحويل البيانات إلى شكل غير مفهوم إلا لمن معه المفتاح الصحيح. حتى لو سُرق الملف أو اعْتُرضت الرسالة، تبقى غير قابلة للقراءة.</p></aside>
+    ${watchBlock("encrypt")}
     <h2>أين نستخدمه؟</h2>
     <div class="grid grid-2">
       <article class="panel"><strong>تخزين كلمات المرور</strong><p>على الخادم تُحفظ مشفّرة — لو تسرّبت قاعدة البيانات لا تظهر كلمات المرور كنص واضح.</p></article>
@@ -678,6 +790,7 @@ function renderWlan() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>حماية الشبكة اللاسلكية ${en("WLAN")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>الـ ${en("Wi‑Fi")} يبث بالراديو — أي شخص قريب قد يحاول التنصت. لذلك نغلق الشبكة بكلمة مرور قوية ومعايير حديثة، ونفصل شبكة الزوار عن الموظفين.</p></aside>
+    ${watchBlock("wlan")}
     <h2>احتياطات مهمة</h2>
     <div class="grid grid-2">
       <article class="panel"><strong>إخفاء اسم الشبكة</strong> ${en("SSID")}<p>لا تبثّي اسم الشبكة للجميع. أمان أساسي فقط — ليس كافيًا وحده.</p></article>
