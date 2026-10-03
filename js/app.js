@@ -54,15 +54,15 @@ const A5_VIDEOS = {
     channel: "Code.org",
     time: "6 دقائق",
     why: "يشرح التشفير من مثال بسيط حتى المفتاح العام والخاص، ولماذا يظهر القفل في المتصفح.",
-    focus: ["تشفير وفك تشفير", "مفتاح عام وخاص", "قفل HTTPS"],
+    focus: ["تشفير وفك تشفير", "مفتاح عام وخاص", "قفل HTTPS · Hypertext Transfer Protocol Secure"],
   },
   wlan: {
     id: "bMQ3W0Vxy3o",
     title: "WiFi Security: WEP, WPA, WPA2, WPA3 and WPS",
     channel: "Florian Dalwigk",
     time: "مقارنة المعايير",
-    why: "يقارن معايير تشفير الواي فاي، ويوضّح لماذا WEP ضعيف ولماذا WPS ثغرة يجب إغلاقها.",
-    focus: ["WEP ضعيف", "WPA2 هو الأنسب", "عطّل WPS"],
+    why: "يقارن معايير تشفير الواي فاي، ويوضّح لماذا WEP (Wired Equivalent Privacy) ضعيف ولماذا WPS (Wi-Fi Protected Setup) ثغرة يجب إغلاقها.",
+    focus: ["WEP · Wired Equivalent Privacy ضعيف", "WPA2 · Wi-Fi Protected Access 2 هو الأنسب", "عطّل WPS · Wi-Fi Protected Setup"],
   },
 };
 
@@ -95,11 +95,27 @@ function speakBtn(text) {
 }
 
 /** كلمة إنجليزية + سماعة بجانب العربية في مكانها */
+function looksLikeAbbrev(label) {
+  const core = String(label).replace(/[^A-Za-z0-9]/g, "");
+  if (core.length < 2 || core.length > 10) return false;
+  const letters = core.replace(/[0-9]/g, "");
+  if (letters.length < 2) return false;
+  return [...letters].every((c) => c === c.toUpperCase() && c !== c.toLowerCase());
+}
+
 function en(key) {
   const g = findTerm(key);
   if (!g) return `<span class="tw-en ltr"><b>${esc(key)}</b></span>`;
   const label = g.exam || g.en;
-  return `<span class="tw-en ltr">${speakBtn(g.say || label)}<b>${esc(label)}</b></span>`;
+  let expansion = "";
+  if (g.full && looksLikeAbbrev(label)) {
+    const phrase = g.full.replace(/\s*\([^)]*\)\s*$/, "").trim();
+    const lower = phrase.toLowerCase();
+    if (lower !== label.toLowerCase() && !label.toLowerCase().includes(lower)) {
+      expansion = `<span class="tw-full">${esc(phrase)}</span>`;
+    }
+  }
+  return `<span class="tw-en ltr">${speakBtn(g.say || label)}<b>${esc(label)}</b>${expansion}</span>`;
 }
 
 function speakEnglish(text) {
@@ -277,7 +293,7 @@ function renderHome() {
         <strong>الأمان المادي</strong>
         <span class="path-en ltr">${speakBtn("physical security measures")} Physical security measures</span>
         <small class="path-mean">ماذا يعني؟ حماية المكان والأجهزة والبيانات من السرقة أو الدخول غير المصرح أو الكوارث.</small>
-        <small>أقفال وبطاقات وقياسات حيوية · كاميرات CCTV وأمن وإنذار · كابلات وخزائن محمية · نسخ احتياطي داخل/خارج الموقع والسحابة</small>
+        <small>أقفال وبطاقات وقياسات حيوية · كاميرات ${en("CCTV")} وأمن وإنذار · كابلات وخزائن محمية · نسخ احتياطي داخل/خارج الموقع والسحابة</small>
       </a>
       <a href="#/a5">
         <span class="num">أ5</span>
@@ -480,7 +496,7 @@ function renderGdpr() {
     <p class="kicker">تشريعات حماية البيانات</p>
     <h1>حماية البيانات ${en("data protection")}</h1>
     <p class="lead">كثير من الدول تضع قوانين تحمي بيانات الأفراد على أنظمة الحاسوب. في أوروبا: ${en("GDPR")}.</p>
-    ${video("MJ_Qj4H9ixc", "What is GDPR?", "نظرة متحركة مبسّطة على GDPR.")}
+    ${video("MJ_Qj4H9ixc", "What is GDPR?", "نظرة متحركة مبسّطة على GDPR: General Data Protection Regulation.")}
     <h2>خمسة مبادئ رئيسة للبيانات الشخصية</h2>
     <ol class="flow-list">
       <li><div>تُعالَج بشكل قانوني.</div></li>
@@ -516,7 +532,7 @@ function renderGdpr() {
       <div class="yes"><h3>مثال صحيح</h3><p>مدرسة تجمع هواتف أولياء الأمور للتواصل الطارئ فقط، وتحذفها بعد التخرج، وتؤمّن الملف.</p></div>
       <div class="no"><h3>انتهاك</h3><p>متجر يبيع قائمة عملائه لشركة إعلانات دون موافقة.</p></div>
     </div>
-    <aside class="discuss"><h3>فكّر مليًّا</h3><p>ما قوانين حماية البيانات في بلدك؟ هل تشبه مبادئ GDPR؟ لمَ هي مهمة لك وللمؤسسة؟</p></aside>
+    <aside class="discuss"><h3>فكّر مليًّا</h3><p>ما قوانين حماية البيانات في بلدك؟ هل تشبه مبادئ ${en("GDPR")}؟ لمَ هي مهمة لك وللمؤسسة؟</p></aside>
     ${pager("gdpr")}
   `;
 }
@@ -851,7 +867,7 @@ function renderEncrypt() {
     </div>
     <article class="scene">
       <h3>مثال يفرّق بينهما</h3>
-      <p>مجلد رواتب مشفّر بـ EFS: الموظفة تفتحه وهي داخلة بحسابها، وزميلها على نفس الجهاز لا يفتحه. إذا سُرق اللابتوب وأُقلع من نظام آخر، EFS ما زال يقفل تلك الملفات، لكن باقي القرص قد يُقرأ. BitLocker يقفل القرص كله قبل أن يبدأ أي نظام.</p>
+      <p>مجلد رواتب مشفّر بـ ${en("EFS")}: الموظفة تفتحه وهي داخلة بحسابها، وزميلها على نفس الجهاز لا يفتحه. إذا سُرق اللابتوب وأُقلع من نظام آخر، التشفير ما زال يقفل تلك الملفات، لكن باقي القرص قد يُقرأ. BitLocker يقفل القرص كله قبل أن يبدأ أي نظام.</p>
     </article>
 
     <h2>تشفير الاتصالات: أربع أدوات، وأربع وظائف</h2>
@@ -866,17 +882,17 @@ function renderEncrypt() {
       </article>
       <article class="panel">
         <strong>شبكة خاصة افتراضية</strong> ${en("VPN")}
-        <p>مكتبان لكل منهما شبكة محلية، والرابط بينهما إنترنت عام. الـ VPN تحوّل هذا الطريق العام إلى قناة خاصة بالتشفير، عبر ${en("tunneling protocol")} يغلّف البيانات ويصادق المستخدم ويتفق على المفاتيح. تستخدمها المؤسسة أيضًا لمن يعمل من البيت.</p>
-        <p>الفرق عن تور: تربط طرفين معروفين (الموظف والمؤسسة)، ولا تخفي التصفح عن الشركة.</p>
+        <p>مكتبان لكل منهما شبكة محلية، والرابط بينهما إنترنت عام. ${en("VPN")} تحوّل هذا الطريق العام إلى قناة خاصة بالتشفير، عبر ${en("tunneling protocol")} يغلّف البيانات ويصادق المستخدم ويتفق على المفاتيح. تستخدمها المؤسسة أيضًا لمن يعمل من البيت.</p>
+        <p>الفرق عن ${en("Tor")}: تربط طرفين معروفين (الموظف والمؤسسة)، ولا تخفي التصفح عن الشركة.</p>
       </article>
       <article class="panel">
         <strong>صفحات الويب</strong> ${en("HTTPS")}
         <p>النسخة الآمنة من طلب صفحات الويب. شهادة رقمية ${en("digital certificate")} من ${en("certificate authority")} تثبت أن الموقع حقيقي، والبيانات بينك وبين الصفحة تُشفَّر بالمفتاح العام والخاص حتى لا تُعترَض.</p>
-        <p>الفرق عن VPN: يحمي زيارة موقع واحد، لا كل اتصالك بشبكة المؤسسة.</p>
+        <p>الفرق عن ${en("VPN")}: يحمي زيارة موقع واحد، لا كل اتصالك بشبكة المؤسسة.</p>
       </article>
     </div>
 
-    <h2>ماذا يحدث عند فتح موقع HTTPS؟</h2>
+    <h2>ماذا يحدث عند فتح موقع ${en("HTTPS")}؟</h2>
     <ol class="flow-list">
       <li><div><strong>طلب الموقع</strong><p>المتصفح يتصل بالخادم ويطلب إثبات هويته.</p></div></li>
       <li><div><strong>الشهادة والمفتاح العام</strong><p>الخادم يرسل شهادته. المفتاح العام مكشوف، والمفتاح الخاص يبقى على الخادم.</p></div></li>
@@ -916,12 +932,12 @@ function renderWlan() {
       <article class="panel"><strong>إخفاء اسم الشبكة</strong> ${en("SSID")}<p>لا تبثّي اسم الشبكة للجميع. أمان أساسي فقط — ليس كافيًا وحده.</p></article>
       <article class="panel"><strong>تصفية العناوين</strong> ${en("MAC address filtering")}<p>اسمحي لأجهزة معتمدة فقط عبر ${en("MAC")}. مفيد، لكن المهاجم الماهر قد يزوّر العنوان.</p></article>
       <article class="panel"><strong>تشفير قديم</strong> ${en("WEP")}<p>ضعيف ويُكسر بسرعة — لا تستخدمينه.</p></article>
-      <article class="panel"><strong>المعيار الموصى به</strong> ${en("WPA2")} ${en("AES")}<p>${en("WPA")} أفضل من WEP، وWPA2 هو الأنسب للمنازل والمؤسسات حاليًا.</p></article>
+      <article class="panel"><strong>المعيار الموصى به</strong> ${en("WPA2")} ${en("AES")}<p>${en("WPA")} أفضل من ${en("WEP")}، و${en("WPA2")} هو الأنسب للمنازل والمؤسسات حاليًا.</p></article>
       <article class="panel"><strong>إعداد سهل وفيه ثغرة</strong> ${en("WPS")}<p>زر أو ${en("PIN")} لربط الجهاز بسرعة، لكن يمكن كسره بهجوم ${en("brute-force attack")} — عطّليه إن أمكن.</p></article>
       <article class="panel"><strong>مكان الراوتر</strong><p>كلمة المرور مطبوعة خلف الجهاز. إن كان في مكان مفتوح، أي زائر قد يقرأها.</p></article>
     </div>
     <h2>فروقات التشفير اللاسلكي</h2>
-    <p class="lead">هذه ليست مستويات لنفس الشيء. WPS أصلًا ليس تشفيرًا، وWEP وWPA وWPA2 معايير مختلفة القوة.</p>
+    <p class="lead">هذه ليست مستويات لنفس الشيء. ${en("WPS")} أصلًا ليس تشفيرًا، و${en("WEP")} و${en("WPA")} و${en("WPA2")} معايير مختلفة القوة.</p>
     <div class="cmp-wrap">
       <table class="cmp">
         <thead>
@@ -941,9 +957,9 @@ function renderWlan() {
           </tr>
           <tr>
             <td>${en("WPA")}</td>
-            <td>جاء حوالي 2003 ليغلق ثغرات WEP. مفتاح 256 بت، ومفتاح مختلف لكل حزمة.</td>
-            <td>صُمّم ليشتغل على أجهزة WEP القديمة، لذلك بقي قابلًا للكسر بسهولة نسبية.</td>
-            <td>أفضل من WEP، وغير كافٍ</td>
+            <td>جاء حوالي 2003 ليغلق ثغرات ${en("WEP")}. مفتاح 256 بت، ومفتاح مختلف لكل حزمة.</td>
+            <td>صُمّم ليشتغل على أجهزة ${en("WEP")} القديمة، لذلك بقي قابلًا للكسر بسهولة نسبية.</td>
+            <td>أفضل من ${en("WEP")}، وغير كافٍ</td>
           </tr>
           <tr>
             <td>${en("WPA2")}</td>
@@ -971,7 +987,7 @@ function renderWlan() {
     </aside>
     <article class="scene">
       <h3>سيناريو مقهى / مكتب</h3>
-      <p>الزوار على Wi‑Fi منفصل بـ WPA2، والموظفون على شبكة أخرى خلف جدار حماية. لا يصل الزائر لملفات الشركة حتى وهو في نفس المبنى.</p>
+      <p>الزوار على ${en("Wi‑Fi")} منفصل بـ ${en("WPA2")}، والموظفون على شبكة أخرى خلف جدار حماية. لا يصل الزائر لملفات الشركة حتى وهو في نفس المبنى.</p>
     </article>
     ${pager("wlan")}
   `;
@@ -1002,12 +1018,12 @@ function renderThink() {
 
     <article class="case">
       <h3>سيناريو شامل: بنك</h3>
-      <p>تصيّد يسرق بيانات عميل → قرض باسمه. غرفة الخوادم بلا بطاقة. النسخ كلها في نفس المبنى. Wi‑Fi للزوار بنفس شبكة الموظفين وبـ WEP.</p>
+      <p>تصيّد يسرق بيانات عميل → قرض باسمه. غرفة الخوادم بلا بطاقة. النسخ كلها في نفس المبنى. ${en("Wi‑Fi")} للزوار بنفس شبكة الموظفين وبـ ${en("WEP")}.</p>
       <div class="reveal"><button type="button" data-reveal>اربطي أ3 · أ4 · أ5</button>
         <div class="answer"><ul class="ticks">
           <li><b>أ3:</b> احتيال + حماية بيانات.</li>
           <li><b>أ4:</b> بطاقات لغرفة الخوادم + نسخ خارج الموقع/سحابة.</li>
-          <li><b>أ5:</b> فصل شبكة الزوار، WPA2، جدار حماية، مصادقة قوية/2FA.</li>
+          <li><b>أ5:</b> فصل شبكة الزوار، ${en("WPA2")}، جدار حماية، مصادقة قوية/${en("2FA")}.</li>
         </ul></div>
       </div>
     </article>
@@ -1031,13 +1047,13 @@ function renderThink() {
       </div>
     </article>
 
-    <div class="quiz-card" data-correct="0" data-ok="صح: WPA2 مع AES هو الموصى به." data-bad="WEP ضعيف؛ WPS فيه ثغرة.">
+    <div class="quiz-card" data-correct="0" data-ok="صح: WPA2 (Wi-Fi Protected Access 2) مع AES (Advanced Encryption Standard) هو الموصى به." data-bad="WEP (Wired Equivalent Privacy) ضعيف؛ WPS (Wi-Fi Protected Setup) فيه ثغرة.">
       <h3>سؤال سريع</h3>
       <p>أي معيار تشفير لاسلكي يُنصح به للشبكات الحالية؟</p>
       <div class="quiz-opts">
-        <button type="button">WPA2</button>
-        <button type="button">WEP</button>
-        <button type="button">WPS فقط</button>
+        <button type="button">WPA2 · Wi-Fi Protected Access 2</button>
+        <button type="button">WEP · Wired Equivalent Privacy</button>
+        <button type="button">WPS · Wi-Fi Protected Setup فقط</button>
       </div>
       <div class="feedback"></div>
     </div>
