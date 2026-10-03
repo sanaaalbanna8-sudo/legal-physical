@@ -98,7 +98,19 @@ function speakBtn(text) {
 function en(key) {
   const g = findTerm(key);
   if (!g) return `<span class="tw-en ltr"><b>${esc(key)}</b></span>`;
-  return `<span class="tw-en ltr">${speakBtn(g.say || g.en)}<b>${esc(g.en)}</b></span>`;
+  const label = g.exam || g.en;
+  return `<span class="tw-en ltr">${speakBtn(g.say || label)}<b>${esc(label)}</b></span>`;
+}
+
+function specTerms(keys) {
+  const chips = keys.map((key) => {
+    const g = findTerm(key);
+    const label = g ? (g.exam || g.en) : key;
+    const ar = g ? g.ar : "";
+    const say = g ? (g.say || label) : key;
+    return `<span class="vocab-chip"><span class="ltr">${speakBtn(say)}<b class="vocab-en">${esc(label)}</b></span>${ar ? `<span class="vocab-ar">${esc(ar)}</span>` : ""}</span>`;
+  }).join("");
+  return `<aside class="vocab-strip"><h3>مصطلحات الامتحان — احفظيها بالإنجليزي</h3><div class="vocab-chips">${chips}</div></aside>`;
 }
 
 function speakEnglish(text) {
@@ -662,13 +674,14 @@ function renderAntivirus() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>برامج مكافحة الفيروسات ${en("antivirus software")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>مثل حارس يفحص كل ملف يدخل الجهاز: هل هذا الملف سليم أم فيروس؟ إذا شكّ فيه، يعزله أو يحذفه قبل أن يؤذي النظام.</p></aside>
+    ${specTerms(["antivirus software", "virus signatures", "heuristics", "identified threats", "quarantine"])}
     ${watchBlock("antivirus")}
     <p class="lead">لماذا نحتاجه؟ لأن الفيروسات والبرامج الضارة تصل عبر الإيميل، التحميل، أو ${en("USB")} — وبدون فحص قد تسرق بيانات أو تعطّل الجهاز.</p>
     <h2>كيف يكتشف التهديد؟ (ثلاث طرق)</h2>
     <ol class="flow-list">
       <li><div><strong>توقيعات الفيروسات</strong> ${en("virus signatures")}<p>لكل فيروس معروف «بصمة» أو نمط في ملفه. البرنامج يقارن ملفاتك بقائمة البصمات. لذلك يجب تحديث القائمة باستمرار — الفيروسات الجديدة تظهر كل يوم.</p></div></li>
       <li><div><strong>الموجِّهات / الاستدلال</strong> ${en("heuristics")}<p>ماذا لو الفيروس جديد وما له بصمة بعد؟ هنا يبحث البرنامج عن سلوك مشبوه (أوامر غريبة لا تظهر عادة في برامج سليمة) فيقول: هذا ملف مريب.</p></div></li>
-      <li><div><strong>التعامل مع التهديد</strong><p>بعد الاكتشاف: إما <b>حذف</b> الملف، أو وضعه في <b>العزل</b> ${en("quarantine")} (سجّان صغير يمنع الملف من العمل دون حذفه فورًا). الحالات الصعبة: إعادة التشغيل بالوضع الآمن أو قرص إنقاذ.</p></div></li>
+      <li><div><strong>التعامل مع التهديد</strong> ${en("identified threats")}<p>بعد الاكتشاف: إما <b>حذف</b> الملف، أو وضعه في <b>العزل</b> ${en("quarantine")} (سجّان صغير يمنع الملف من العمل دون حذفه فورًا). الحالات الصعبة: إعادة التشغيل بالوضع الآمن أو قرص إنقاذ.</p></div></li>
     </ol>
     <article class="scene">
       <h3>سيناريو</h3>
@@ -686,15 +699,16 @@ function renderFirewall() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>جدار الحماية ${en("firewall")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>بوابة أمن بين شبكة المؤسسة والإنترنت. تفحص كل بيانات داخلة أو خارجة: المسموح يمر، والمشبوه يُحظر.</p></aside>
+    ${specTerms(["firewall", "software firewall", "hardware firewall", "packet filtering", "application layer awareness", "inbound rules", "outbound rules", "network address"])}
     ${watchBlock("firewall")}
     ${graphic(SVG.firewall, "الإنترنت ← جدار الحماية ← شبكة المؤسسة")}
-    <p class="lead">يوجد كـ <b>برنامج</b> على جهازك، أو كـ <b>جهاز عتاد</b> واحد يحمي كل الحواسيب على الشبكة المحلية ${en("LAN")}.</p>
+    <p class="lead">نوعان: ${en("software firewall")} يعمل برنامجًا على جهاز واحد، و${en("hardware firewall")} جهاز واحد يفحص بيانات كل الحواسيب على الشبكة المحلية ${en("LAN")}.</p>
     <h2>تقنيات التصفية (كيف يقرر؟)</h2>
     <div class="grid grid-2">
       <article class="panel"><strong>تصفية الحزم وفحصها</strong> ${en("packet filtering")}<p>البيانات تسافر على شكل ${en("packet")}. الجدار ينظر لكل حزمة: من أين؟ إلى أين؟ أي ${en("port")}؟ أي ${en("protocol")}؟ ثم يسمح أو يمنع حسب القواعد.</p></article>
       <article class="panel"><strong>الوعي بطبقة التطبيقات</strong> ${en("application layer awareness")}<p>قواعد حسب التطبيق نفسه — مثل: امنع برنامج الاتصال عن بُعد، واسمح بالمتصفح فقط.</p></article>
       <article class="panel"><strong>قواعد واردة وصادرة</strong> ${en("inbound rules")} ${en("outbound rules")}<p><b>واردة:</b> من الإنترنت إلى شبكتك. <b>صادرة:</b> من شبكتك إلى الإنترنت. مدير الشبكة يعدّل القواعد حسب سياسة المؤسسة.</p></article>
-      <article class="panel"><strong>عنوان الشبكة</strong> ${en("NAT")}<p>تخفي عناوين الأجهزة الداخلية ${en("IP")} خلف عنوان عام واحد. القرصان من الخارج يصعب عليه معرفة أجهزة الشبكة واحدًا واحدًا.</p></article>
+      <article class="panel"><strong>عنوان الشبكة</strong> ${en("network address")}<p>تخفي عناوين الأجهزة الداخلية ${en("IP")} خلف عنوان عام واحد. اسم التقنية ${en("NAT")}. القرصان من الخارج يصعب عليه معرفة أجهزة الشبكة واحدًا واحدًا.</p></article>
     </div>
     <article class="scene">
       <h3>سيناريو مكتب</h3>
@@ -712,6 +726,7 @@ function renderAuth() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>مصادقة المستخدم ${en("user authentication")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>قبل أن تدخل النظام: أثبت أنك أنتِ. الهدف دخول الشرعيين بسهولة نسبيًا، ومنع غير المصرح ${en("unauthorised access")}.</p></aside>
+    ${specTerms(["user authentication", "login", "strong password", "graphical password", "biometric authentication", "two-step verification", "security tokens", "knowledge-based authentication", "Kerberos", "certificate-based authentication"])}
     ${watchBlock("auth")}
     <h2>الطرق من الأبسط إلى الأقوى</h2>
     <div class="grid grid-2">
@@ -720,8 +735,8 @@ function renderAuth() {
       <article class="panel"><strong>نصية ورسومية</strong> ${en("graphical password")}<p>النص: تكتبينها. الرسومية: ترسمين نمطًا على الشاشة (شائع على اللمس).</p></article>
       <article class="panel"><strong>بيومترية</strong> ${en("biometric authentication")}<p>بصمة، وجه، قزحية، صوت. ميزة: لا تنسينها. عيب خطير: إذا سُرقت البيانات البيومترية لا يمكن «تغيير بصمتك» مثل كلمة المرور.</p></article>
       <article class="panel"><strong>التحقق بخطوتين</strong> ${en("two-step verification")} ${en("2FA")}<p>شيء تعرفينه (كلمة المرور) + شيء معك (رمز من الجوال أو بصمة). طبقة إضافية قوية.</p></article>
-      <article class="panel"><strong>رموز الأمان</strong> ${en("security tokens")}<p>جهاز صغير يولّد شفرة لمرة واحدة. أنواع: عبر ${en("USB")} أو تقريب بالجهاز ${en("NFC")}.</p></article>
-      <article class="panel"><strong>قائمة على المعرفة</strong> ${en("knowledge-based authentication")}<p>أسئلة مثل «مدينة الميلاد؟» — شائعة في البنوك واستعادة كلمة المرور.</p></article>
+      <article class="panel"><strong>رموز الأمان</strong> ${en("security tokens")}<p>جهاز صغير يولّد شفرة لمرة واحدة. النوعان في المواصفة: مفتاح يوصل عبر ${en("USB")}، ومفتاح يُقرَّب من القارئ ${en("near field key")} باستخدام ${en("NFC")}.</p></article>
+      <article class="panel"><strong>قائمة على المعرفة</strong> ${en("knowledge-based authentication")}<p>تعتمد على ${en("question and response")}: سؤال محفوظ مسبقًا وجواب لا يعرفه إلا صاحب الحساب، مثل «مدينة الميلاد؟». شائعة في البنوك واستعادة كلمة المرور.</p></article>
       <article class="panel"><strong>كيربيروس</strong> ${en("Kerberos")}<p>في شبكات ويندوز/لينكس: لا تُرسل كلمة المرور بلا تشفير. الحسابات تُدار عبر ${en("Active Directory")}.</p></article>
       <article class="panel"><strong>مستندة إلى الشهادات</strong> ${en("certificate-based authentication")}<p>الموقع يثبت هويته بشهادة رقمية ${en("digital certificate")} من هيئة شهادات ${en("certificate authority")} ضمن ${en("HTTPS")}.</p></article>
     </div>
@@ -740,8 +755,10 @@ function renderAccess() {
     ${groupNav("a5", "access")}
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>التحكم في الوصول ${en("access controls")}</h1>
-    <aside class="def"><strong>فكّري فيها هكذا</strong><p>حتى بعد تسجيل الدخول: ليس كل شخص يرى كل شيء. نحدد من يفتح أي ملف/مجلد، وهل يقرأ فقط أم يعدّل.</p></aside>
+    <aside class="def"><strong>فكّري فيها هكذا</strong><p>حتى بعد تسجيل الدخول: ليس كل شخص يرى كل شيء. نحدد من يصل إلى أي مورد، وهل يقرأ فقط أم يعدّل.</p></aside>
+    ${specTerms(["access controls", "applications", "folders", "files", "physical resources", "trusted computing", "TPM"])}
     ${watchBlock("access")}
+    <p class="lead">التحكم في الوصول يقيّد المستخدم عن: ${en("applications")} و${en("folders")} و${en("files")} و${en("physical resources")} مثل غرفة الخادم أو الخزنة.</p>
     <ul class="ticks">
       <li><b>قراءة فقط:</b> يشاهد الملف ولا يغيّره.</li>
       <li><b>كتابة:</b> يستطيع التعديل.</li>
@@ -766,6 +783,7 @@ function renderEncrypt() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>التشفير ${en("encryption")}</h1>
     <aside class="def"><strong>الغرض</strong><p>إخفاء البيانات حتى لا يقرأها إلا الشخص المقصود. معظم الطرق تعتمد على مفتاح، والمفتاح رقم ثنائي: يُستخدم للتشفير ولإعادة البيانات إلى شكلها المقروء.</p></aside>
+    ${specTerms(["encryption", "safe password storage", "DRM", "disc encryption", "communications encryption", "built-in encryption", "Tor", "VPN", "digital certificate", "certificate authority", "HTTPS", "public key", "private key"])}
     ${watchBlock("encrypt")}
 
     <h2>الفرق الأساسي: مفتاح واحد أم مفتاحان؟</h2>
@@ -800,7 +818,7 @@ function renderEncrypt() {
         </thead>
         <tbody>
           <tr>
-            <td>تخزين كلمات المرور</td>
+            <td>تخزين كلمات المرور ${en("safe password storage")}</td>
             <td>السر داخل قاعدة بيانات الخادم</td>
             <td>إذا وصل متسلل إلى الجدول، لا يرى الكلمة كنص واضح</td>
             <td>يحمي الكلمة وهي مخزّنة، ولا يحميها وهي تسير على الشبكة</td>
@@ -812,10 +830,10 @@ function renderEncrypt() {
             <td>يحمي عملًا محميًا بحقوق النشر، وليس ملفات المؤسسة</td>
           </tr>
           <tr>
-            <td>ملفات ومجلدات ${en("EFS")}</td>
-            <td>ملفات مستخدم بعينه على ويندوز</td>
-            <td>المفتاح متاح فقط وهو مسجّل الدخول</td>
-            <td>أضيق من تشفير القرص: ملف أو مجلد، لا الجهاز كله</td>
+            <td>ملفات ومجلدات وأقراص ${en("disc encryption")}</td>
+            <td>البيانات وهي محفوظة على الجهاز: ملف أو مجلد أو القرص كله</td>
+            <td>إذا سُرق اللابتوب أو فُصل القرص وركّب على جهاز آخر</td>
+            <td>يحمي النسخة المخزّنة. تشفير الاتصالات يحمي الطريق فقط</td>
           </tr>
           <tr>
             <td>القرص كاملًا ${en("BitLocker")}</td>
@@ -824,7 +842,7 @@ function renderEncrypt() {
             <td>يحمي من ${en("offline attack")} الذي تتجاوزه الأذونات وحدها</td>
           </tr>
           <tr>
-            <td>تشفير الاتصالات</td>
+            <td>تشفير الاتصالات ${en("communications encryption")}</td>
             <td>البيانات وهي تنتقل بين جهازين</td>
             <td>إنترنت، اتصال بعيد، صفحة ويب، مكالمة</td>
             <td>يحمي الطريق، لا النسخة المخزّنة على القرص</td>
@@ -855,8 +873,8 @@ function renderEncrypt() {
     <h2>تشفير الاتصالات: أربع أدوات، وأربع وظائف</h2>
     <div class="grid grid-2">
       <article class="panel">
-        <strong>مدمج في الجهاز</strong> ${en("GSM")}
-        <p>مكالمة الجوال رقمية ومشفّرة بخوارزمية A5/1. الفرق: التشفير هنا داخل الشبكة الخلوية، لا داخل تطبيق. ثبت أن A5/1 تُكسر، فيصير التنصت ممكنًا أثناء المكالمة. التشفير الضعيف لا يساوي الحماية.</p>
+        <strong>مدمج في الجهاز</strong> ${en("built-in encryption")}
+        <p>الهاتف والجهاز اللوحي يشفّران البيانات داخل الجهاز نفسه، لا عبر برنامج تثبّته لاحقًا. مثال الشبكة الخلوية ${en("GSM")} بخوارزمية A5/1: التشفير موجود، لكنه ضعيف ويُكسر، فيصير التنصت ممكنًا أثناء المكالمة.</p>
       </article>
       <article class="panel">
         <strong>تور</strong> ${en("Tor")}
@@ -908,6 +926,7 @@ function renderWlan() {
     <p class="kicker">أ5 · أمان البرامج والأجهزة</p>
     <h1>حماية الشبكة اللاسلكية ${en("WLAN")}</h1>
     <aside class="def"><strong>فكّري فيها هكذا</strong><p>الـ ${en("Wi‑Fi")} يبث بالراديو — أي شخص قريب قد يحاول التنصت. لذلك نغلق الشبكة بكلمة مرور قوية ومعايير حديثة، ونفصل شبكة الزوار عن الموظفين.</p></aside>
+    ${specTerms(["WLAN", "SSID", "MAC address filtering", "WEP", "WPA2", "WPS", "wireless vulnerabilities", "security by design"])}
     ${watchBlock("wlan")}
     <h2>احتياطات مهمة</h2>
     <div class="grid grid-2">
@@ -959,7 +978,8 @@ function renderWlan() {
       </table>
     </div>
     <aside class="discuss">
-      <h3>عند تصميم الشبكة اسألي</h3>
+      <h3>من مرحلة التصميم ${en("security by design")}</h3>
+      <p>تخفيف الثغرات المعروفة ${en("wireless vulnerabilities")} لا يُترك لما بعد التشغيل: نختار ${en("WPA2")}، نعطّل ${en("WPS")}، ونخفي ${en("SSID")} إن لزم، قبل أن يستخدم أحد الشبكة.</p>
       <ul class="ticks">
         <li>هل الشبكة للموظفين فقط أم للزوار أيضًا؟</li>
         <li>هل يتشارك الزوار نفس شبكة الموظفين؟ (الأفضل: شبكة منفصلة)</li>
